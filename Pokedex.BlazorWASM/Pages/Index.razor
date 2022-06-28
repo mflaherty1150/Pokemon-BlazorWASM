@@ -2,6 +2,9 @@
 @inject HttpClient httpClient
 @using Pokedex.BlazorWASM.Models
 @using Newtonsoft.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
 
 <div class="row">
     <div class="col mx-auto justify-content-between">
@@ -29,7 +32,7 @@ else
         <div class="row">
             <div class="col mx-auto justify-content-between">
                 <div class="card">
-                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/@(Pokemon.Id).png" class="card-img-top img-fluid" alt="@Pokemon.Name">
+                    <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/@(Pokemon.Id).png" class="card-img-top img-fluid" style="width: 50vh" alt="@Pokemon.Name">
                     <div class="card-body">
                         <h3 class="card-title">@Pokemon.Name.ToUpper()</h3>
                         <h6>Height: @Pokemon.Height</h6>
@@ -39,8 +42,8 @@ else
                 </div>
 
                 <form class="form-inline">
-                    <button type="button" class="btn btn-primary mb-2" @onlick="@(() => ChangePokemonAsync(-1))">Prev</button>
-                    <button type="button" class="btn btn-primary mb-2 ml-auto" @onlick="@(() => ChangePokemonAsync(1))">Next</button>
+                    <button type="button" class="btn btn-primary" @onclick=@(() => ChangePokemonAsync(-1))>Prev</button>
+                    <button type="button" class="btn btn-primary" @onclick=@(() => ChangePokemonAsync(1))>Next</button>
                 </form>
             </div>
         </div>
@@ -49,7 +52,7 @@ else
 
 @code {
     public Pokemon Pokemon { get; set; }
-    public string searchText;
+    public string searchText { get; set; }
     public bool IsLoading { get; set; }
 
     protected async Task GetPokemonAsync()
@@ -61,8 +64,7 @@ else
 
     protected async Task ChangePokemonAsync(int i)
     {
-        var change = Pokemon.Id + i;
-        Pokemon = await GetPokemon("{change}");
+        Pokemon = await GetPokemon((Pokemon.Id += i).ToString());
     }
 
     public async Task<Pokemon> GetPokemon(string name)
